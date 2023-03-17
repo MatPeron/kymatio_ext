@@ -1,6 +1,14 @@
 Kymatio: Wavelet scattering in Python
 =====================================
 
+# What is this fork for?
+
+This fork is dedicated to expand this code with new functionalities that are needed for my personal project. Here's a (ever expanding) list of changes and additions:
+
+- Added a flag to output 3D wavelet scattering transform maps; this is done by setting the `method` argument of [kymatio.torch.HarmonicScattering3D](https://www.kymat.io/codereference.html#module-kymatio.torch) to `"map"`. The output will be an array containing a number of 3D WST maps of the same shape (M, N, O) as the input. These maps are indexed inside a single output array for each j and l value of the wavelets used. Note that the output will tend to be very large in size if a large number of wavelet or a big input field is used.
+
+---
+
 Kymatio is an implementation of the wavelet scattering transform in the Python programming language, suitable for large-scale numerical experiments in signal processing and machine learning.
 Scattering transforms are translation-invariant signal representations implemented as convolutional networks whose filters are not learned, but fixed (as wavelet filters).
 
