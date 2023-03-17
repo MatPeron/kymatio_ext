@@ -70,7 +70,7 @@ else:
 
 class TorchBackend3D(TorchBackend):
     @staticmethod
-    def stack(arrays, L):
+    def stackOLD(arrays, L):
         S = torch.stack(arrays, dim=1)
         S = S.reshape((S.shape[0], S.shape[1] // (L + 1), (L + 1)) + S.shape[2:])
         return S
@@ -150,5 +150,45 @@ class TorchBackend3D(TorchBackend):
                 input_array.shape[0], -1).sum(1)
         return integrals
 
+# MP: new methods starts here ----------
+    
+    @staticmethod
+    def stack(arrays, L):
+        S = torch.stack(arrays, dim=len(arrays[0].shape)-1)
+        S = S.reshape((*S.shape[:-2], S.shape[-2] // (L + 1), (L + 1)) + S.shape[-1:])
+        return S
+
+    @staticmethod
+    def compute_maps(input_array, integral_powers):
+        """Computes maps.
+
+            Computes the 3D convolved maps of the input_array to the given powers.
+            Same as compute_integrals but with no sum over spatial dimensions.
+            Parameters
+            ----------
+            input_array : torch tensor
+                Size (B, M, N, O), where B is batch_size, and M, N, O are spatial
+                dims.
+            integral_powers : list
+                List of P positive floats containing the p values used to
+                compute the integrals of the input_array to the power p (l_p
+                norms).
+            Returns
+            -------
+            integrals : torch tensor
+                Tensor of size (B, M, N, O, P) containing the maps of the input_array
+                to the powers p (l_p norms).
+        """
+        input_array = input_array.view(input_array.shape[-4:-1])
+        maps = torch.zeros((input_array.shape[0],
+                            input_array.shape[1],
+                            input_array.shape[2],
+                            len(integral_powers)),
+                device=input_array.device)
+        for i_q, q in enumerate(integral_powers):
+            maps[..., i_q] = input_array ** q
+        return maps
+
+    # MP: new method ends here ------------
 
 backend = TorchBackend3D
