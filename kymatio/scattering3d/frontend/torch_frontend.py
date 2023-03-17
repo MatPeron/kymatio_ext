@@ -63,12 +63,19 @@ class HarmonicScatteringTorch3D(ScatteringTorch, ScatteringBase3D):
         for k in range(len(self.filters)):
             self.filters[k] = buffer_dict['tensor' + str(k)]
 
-        methods = ['integral']
+        methods = ['integral', 'map'] # MP: modified from ['integral']
         if not self.method in methods:
             raise ValueError('method must be in {}'.format(methods))
 
         if self.method == 'integral': \
                 self.averaging = lambda x: self.backend.compute_integrals(x, self.integral_powers)
+            
+        # MP: new block starts here ----------
+
+        if self.method == 'map':
+                self.averaging = lambda x: self.backend.compute_maps(x, self.integral_powers)
+
+        # MP: new block ends here ------------
 
         S = scattering3d(input_array, filters=self.filters, rotation_covariant=self.rotation_covariant, L=self.L,
                             J=self.J, max_order=self.max_order, backend=self.backend, averaging=self.averaging)
