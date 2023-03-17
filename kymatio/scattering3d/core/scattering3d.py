@@ -1,4 +1,4 @@
-def scattering3d(x, filters, rotation_covariant, L, J, max_order, backend, averaging):
+def scattering3d(x, filters, rotation_covariant, L, J, max_order, backend, averaging, window): # MP: added new arguement
     """
     The forward pass of 3D solid harmonic scattering
     Parameters
@@ -21,7 +21,7 @@ def scattering3d(x, filters, rotation_covariant, L, J, max_order, backend, avera
     modulus_rotation = backend.modulus_rotation
     stack = backend.stack
 
-    U_0_c = rfft(x)
+    U_0_c = cdgmm3d(rfft(x), window) if window is not None else rfft(x) # MP: implemented window function on transformed field
 
     s_order_1, s_order_2 = [], []
     for l in range(L + 1):
