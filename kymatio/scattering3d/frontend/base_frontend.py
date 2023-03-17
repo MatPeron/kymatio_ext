@@ -5,7 +5,7 @@ from ..filter_bank import solid_harmonic_filter_bank, gaussian_filter_bank
 class ScatteringBase3D(ScatteringBase):
     def __init__(self, J, shape, L=3, sigma_0=1, max_order=2,
                  rotation_covariant=True, method='integral', points=None,
-                 integral_powers=(0.5, 1., 2.), backend=None):
+                 integral_powers=(0.5, 1., 2.), backend=None, window=None): # MP: added new argument
         super(ScatteringBase3D, self).__init__()
         self.J = J
         self.shape = shape
@@ -18,6 +18,12 @@ class ScatteringBase3D(ScatteringBase):
         self.points = points
         self.integral_powers = integral_powers
         self.backend = backend
+        
+        # MP: new argument ----
+        
+        self.window = window
+        
+        # MP: -----------------
 
     def build(self):
         self.M, self.N, self.O = self.shape
