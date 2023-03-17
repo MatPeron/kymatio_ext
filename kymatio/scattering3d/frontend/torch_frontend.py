@@ -6,11 +6,11 @@ from .base_frontend import ScatteringBase3D
 
 class HarmonicScatteringTorch3D(ScatteringTorch, ScatteringBase3D):
     def __init__(self, J, shape, L=3, sigma_0=1, max_order=2, rotation_covariant=True, method='integral', points=None,
-                 integral_powers=(0.5, 1., 2.), backend='torch'):
+                 integral_powers=(0.5, 1., 2.), backend='torch', window=None): # MP: added new argument
         ScatteringTorch.__init__(self)
         ScatteringBase3D.__init__(self, J, shape, L, sigma_0, max_order,
                                   rotation_covariant, method, points,
-                                  integral_powers, backend)
+                                  integral_powers, backend, window) # MP: added new argument
 
         self.build()
 
@@ -78,7 +78,8 @@ class HarmonicScatteringTorch3D(ScatteringTorch, ScatteringBase3D):
         # MP: new block ends here ------------
 
         S = scattering3d(input_array, filters=self.filters, rotation_covariant=self.rotation_covariant, L=self.L,
-                            J=self.J, max_order=self.max_order, backend=self.backend, averaging=self.averaging)
+                         J=self.J, max_order=self.max_order, backend=self.backend, averaging=self.averaging,
+                         window=self.window) # MP: added new arguemnt
         scattering_shape = S.shape[1:]
 
         S = S.reshape(batch_shape + scattering_shape)
