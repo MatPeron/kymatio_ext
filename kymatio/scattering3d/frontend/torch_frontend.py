@@ -35,11 +35,15 @@ class HarmonicScatteringTorch3D(ScatteringTorch, ScatteringBase3D):
         self.gaussian_filters = g
         self.register_buffer('tensor_gaussian_filter', self.gaussian_filters)
         
+        # MP: New block starts here ----
+        
         w = torch.zeros(self.window.shape + (2,))
         w[..., 0] = torch.from_numpy(self.window.real)
         w[..., 1] = torch.from_numpy(self.window.imag)
         self.window = w
         self.register_buffer("window", self.window)
+        
+        # MP: New block ends here ------
 
     def scattering(self, input_array):
         if not torch.is_tensor(input_array):
