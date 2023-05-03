@@ -37,11 +37,12 @@ class HarmonicScatteringTorch3D(ScatteringTorch, ScatteringBase3D):
         
         # MP: New block starts here ----
         
-        w = torch.zeros(self.window.shape + (2,))
-        w[..., 0] = torch.from_numpy(self.window.real)
-        w[..., 1] = torch.from_numpy(self.window.imag)
-        self.window = w
-        self.register_buffer("tensor_window", self.window)
+        if self.window is not None:
+            w = torch.zeros(self.window.shape + (2,))
+            w[..., 0] = torch.from_numpy(self.window.real)
+            w[..., 1] = torch.from_numpy(self.window.imag)
+            self.window = w
+            self.register_buffer("tensor_window", self.window)
         
         # MP: New block ends here ------
 
@@ -72,8 +73,9 @@ class HarmonicScatteringTorch3D(ScatteringTorch, ScatteringBase3D):
         buffer_dict = dict(self.named_buffers())
         for k in range(len(self.filters)):
             self.filters[k] = buffer_dict['tensor' + str(k)]
-            
-        self.window = buffer_dict['tensor_window'] # MP: added line
+        
+        if self.window is not None:
+            self.window = buffer_dict['tensor_window'] # MP: added line
 
         methods = ['integral', 'map'] # MP: modified from ['integral']
         if not self.method in methods:
